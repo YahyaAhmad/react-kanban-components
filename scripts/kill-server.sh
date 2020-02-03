@@ -1,0 +1,1 @@
+fuser -k 9000/tcp

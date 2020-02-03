@@ -1,0 +1,21 @@
+.Kanban-Column-Container {
+    padding: 5px 10px;
+}
+
+.Kanban-Column-Label {
+    font-weight: bold;
+    margin: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid black;
+}
+
+.Kanban-Column {
+    background-color: #f2f2f2;
+    padding: 5px 10px;
+    width: 200px;
+    min-height: 100px;
+}
+
+.Kanban-Column-Content {
+    padding: 10px 0;
+}
