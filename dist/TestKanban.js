@@ -4,46 +4,28 @@ import Card from "../src/Kanban/components/Card/Card";
 
 const TestKanban = () => {
   const columns = [
+    { id: "column1", label: "Column 1", weight: 1 },
+    { id: "column2", label: "Column 2", weight: 2 }
+  ];
+  const cards = [
     {
-      id: "column1",
-      weight: 0,
-      label: "Column Test",
-      content: [
-        {
-          id: "1",
-          title: "My only advancements",
-          component: Card
-        }
-      ]
+      id: 1,
+      columnId: "column1",
+      title: "Something",
+      component: Card,
+      weight: 1
     },
     {
-      id: "column2",
-      weight: 1,
-      label: "Column Test 2",
-      content: [
-        {
-          id: "34",
-          title: "My only aa",
-          component: Card
-        }
-      ]
-    },
-    {
-      id: "column3",
-      weight: 2,
-      label: "Column Test 3",
-      content: [
-        {
-          id: "3",
-          title: "My only aa",
-          component: Card
-        }
-      ]
+      id: 2,
+      columnId: "column1",
+      title: "Something 2",
+      component: Card,
+      weight: 2
     }
   ];
   return (
     <div>
-      <Kanban columns={columns} />
+      <Kanban columns={columns} cards={cards} />
     </div>
   );
 };

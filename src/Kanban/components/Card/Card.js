@@ -5,6 +5,7 @@ import { useDrag } from "react-dnd";
 const Card = ({ title, id, columnId }) => {
   const [{ visibility }, dragRef] = useDrag({
     item: { type: "CARD", id, columnId },
+    isDragging: monitor => monitor.getItem().id == id,
     collect: monitor => ({
       visibility: monitor.isDragging() ? "hidden" : null
     })

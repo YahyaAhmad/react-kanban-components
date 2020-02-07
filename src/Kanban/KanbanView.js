@@ -1,14 +1,15 @@
 import React from "react";
-import { map, omit } from "lodash";
+import { map, omit,filter } from "lodash";
 import Column from "./components/Column";
 import "./style.css";
 
-const KanbanView = ({ columns }) => {
-  const renderCards = (cards = [], columnId) => {
-    return map(cards, card => {
+const KanbanView = ({ columns, cards }) => {
+  const renderCards = columnId => {
+    const columnCards = filter(cards, { columnId });
+    return map(columnCards, card => {
       const Card = card.component;
       if (!Card) {
-        // return null;
+        throw new Error("There is a card without a component.")
       }
       const cardProps = omit(card, "component");
       return <Card key={card.id} {...cardProps} columnId={columnId} />;
@@ -21,7 +22,7 @@ const KanbanView = ({ columns }) => {
       const columnProps = omit(column, "content");
       return (
         <Column key={column.id} {...columnProps}>
-          {renderCards(column.content, column.id)}
+          {renderCards(column.id)}
         </Column>
       );
     });
