@@ -3,7 +3,7 @@ import ColumnView from "./ColumnView";
 import { useDrag, useDrop } from "react-dnd";
 import types from "../../../constants/types";
 import { KanbanContext } from "../../";
-const Column = ({ children, weight, label, id }) => {
+const Column = ({ children, weight, label, id, locked }) => {
   const ref = useRef(null);
   const { swapColumns, moveCard } = useContext(KanbanContext);
   const [{ visibility }, dragRef] = useDrag({
@@ -40,6 +40,10 @@ const Column = ({ children, weight, label, id }) => {
       // Get pixels to the top
       const hoverClientX = clientOffset.x - hoverBoundingRect.left;
 
+      if (locked) {
+        return;
+      }
+
       if (weight < item.weight && hoverClientX < hoverMiddleX) {
         return;
       }
@@ -48,15 +52,24 @@ const Column = ({ children, weight, label, id }) => {
       if (item.weight > weight && hoverClientX > hoverMiddleX) {
         return;
       }
-      console.log(dragIndex, hoverIndex);
 
       // Time to actually perform the action
       swapColumns(dragIndex, hoverIndex);
     }
   });
-  dropRef(dragRef(ref));
+  if (locked) {
+    dropRef(ref);
+  } else {
+    dropRef(dragRef(ref));
+  }
   return (
-    <ColumnView id={id} visibility={visibility} ref={ref} label={label}>
+    <ColumnView
+      id={id}
+      visibility={visibility}
+      ref={ref}
+      label={label}
+      locked={locked}
+    >
       {children}
     </ColumnView>
   );

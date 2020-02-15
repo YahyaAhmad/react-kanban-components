@@ -16,6 +16,15 @@
     min-height: 100px;
 }
 
+.Kanban-Column.Locked {
+    background-color: #5162ff;
+}
+
+.Kanban-Column.Locked .Kanban-Column-Label {
+    color: white;
+    border-color: white;
+}
+
 .Kanban-Column-Content {
     padding: 10px 0;
 }

@@ -1,5 +1,6 @@
 const types = {
-  COLUMN: "COLUMN"
+  COLUMN: "COLUMN",
+  CARD: "CARD",
 };
 
 export default types;
