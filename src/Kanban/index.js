@@ -21,7 +21,8 @@ const Kanban = ({
   onCardsChange = funNotDefined,
   onColumnAdd = promiseFunNotDefined,
   onColumnsChange = funNotDefined,
-  addableColumns = false
+  addableColumns = false,
+  editableColumns = false
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
   const [kanbanCards, setKanbanCards] = useState([]);
@@ -163,7 +164,8 @@ const Kanban = ({
     handleCardsChange,
     handleColumnsChange,
     addColumn,
-    addableColumns
+    addableColumns,
+    editableColumns
   };
   return (
     <KanbanContext.Provider value={kanbanContextValues}>

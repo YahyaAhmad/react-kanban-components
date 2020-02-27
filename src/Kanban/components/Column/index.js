@@ -5,9 +5,12 @@ import types from "../../../constants/types";
 import { KanbanContext } from "../../";
 const Column = ({ children, weight, label, id, locked }) => {
   const ref = useRef(null);
-  const { swapColumns, moveCard, handleColumnsChange } = useContext(
-    KanbanContext
-  );
+  const {
+    swapColumns,
+    moveCard,
+    handleColumnsChange,
+    editableColumns
+  } = useContext(KanbanContext);
   const [{ visibility }, dragRef] = useDrag({
     item: { type: types.COLUMN, id },
     collect: monitor => ({
@@ -76,6 +79,7 @@ const Column = ({ children, weight, label, id, locked }) => {
       ref={ref}
       label={label}
       locked={locked}
+      editable={editableColumns}
     >
       {children}
     </ColumnView>

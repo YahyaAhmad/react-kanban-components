@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 const ColumnView = React.forwardRef(
-  ({ children, label, visibility, id, locked }, ref) => {
+  ({ children, label, visibility, id, locked, editable }, ref) => {
     let columnClasses = ["Kanban-Column"];
 
     if (locked) {
