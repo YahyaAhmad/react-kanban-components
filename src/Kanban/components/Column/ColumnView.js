@@ -16,7 +16,7 @@ const ColumnView = React.forwardRef(
           ref={ref}
           style={{ visibility }}
         >
-          <div className="Kanban-Column-Label">{label}</div>
+          <h2 className="Kanban-Column-Label">{label}</h2>
           <div className="Kanban-Column-Content">{children}</div>
         </div>
       </div>

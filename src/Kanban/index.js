@@ -20,6 +20,7 @@ const Kanban = ({
   onCardClick = funNotDefined,
   onCardsChange = funNotDefined,
   onColumnAdd = promiseFunNotDefined,
+  onColumnsChange = funNotDefined,
   addableColumns = false
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
@@ -41,6 +42,10 @@ const Kanban = ({
 
   const handleCardsChange = () => {
     onCardsChange(kanbanCards);
+  };
+
+  const handleColumnsChange = () => {
+    onColumnsChange(kanbanColumns);
   };
 
   /**
@@ -119,8 +124,6 @@ const Kanban = ({
 
   const addColumn = label =>
     new Promise(async resolve => {
-      console.log("Submit");
-
       let newColumns = [...kanbanColumns];
 
       // Get the maxiumum weight to set the new column at the end of the list
@@ -133,7 +136,8 @@ const Kanban = ({
 
       let addedColumn = {
         label,
-        weight: maxiumumWeight + 1
+        weight: maxiumumWeight + 1,
+        locked: false
       };
 
       let promise = onColumnAdd(label, maxiumumWeight + 1);
@@ -157,6 +161,7 @@ const Kanban = ({
     moveCard,
     onCardClick,
     handleCardsChange,
+    handleColumnsChange,
     addColumn,
     addableColumns
   };
