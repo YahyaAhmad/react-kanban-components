@@ -2,10 +2,10 @@
   "name": "react-kanban-components",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/main.js",
   "scripts": {
     "start": "./scripts/kill-server.sh | webpack-dev-server --config webpack.dev.js",
-    "build": "webpack --config webpack.dev.js"
+    "watch": "webpack --config webpack.watch.js --watch"
   },
   "author": "Yahya Ahmad",
   "license": "ISC",
@@ -27,6 +27,8 @@
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
     "react-dom": "^16.12.0",
-    "react-hot-loader": "^4.12.19"
+    "react-hook-form": "^4.9.8",
+    "react-hot-loader": "^4.12.19",
+    "react-icons": "^3.9.0"
   }
 }

@@ -1,7 +1,6 @@
 var path = require("path");
 module.exports = {
   entry: path.resolve("./dist/index.js"),
-  mode: "development",
   resolve: {
     alias: {
       "react-dom": "@hot-loader/react-dom"
@@ -21,12 +20,5 @@ module.exports = {
         use: ["style-loader", "css-loader"]
       }
     ]
-  },
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    filename: path.join(__dirname, "dist"),
-    compress: true,
-    hot: true,
-    port: 9000
   }
 };

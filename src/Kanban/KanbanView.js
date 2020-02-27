@@ -3,6 +3,7 @@ import { map, omit, filter } from "lodash";
 import Column from "./components/Column";
 import "./style.css";
 import Card from "./components/Card/Card";
+import ColumnAddForm from "./components/ColumnAddForm";
 
 const KanbanView = ({ columns, cards }) => {
   const renderCards = columnId => {
@@ -32,7 +33,12 @@ const KanbanView = ({ columns, cards }) => {
     });
   };
 
-  return <div className="Kanban">{renderColumns()}</div>;
+  return (
+    <div className="Kanban">
+      {renderColumns()}
+      <ColumnAddForm />
+    </div>
+  );
 };
 
 export default KanbanView;

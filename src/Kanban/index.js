@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import KanbanView from "./KanbanView";
 import Backend from "react-dnd-html5-backend";
-import { keyBy, sortBy, find, forEach } from "lodash";
+import { reduce, sortBy, find, forEach } from "lodash";
 import { DndProvider } from "react-dnd";
 
 export const KanbanContext = React.createContext(null);
@@ -12,7 +12,9 @@ const Kanban = ({
   columns = [],
   cards = [],
   onCardClick = funNotDefined,
-  onCardsChange = funNotDefined
+  onCardsChange = funNotDefined,
+  onColumnAdd = funNotDefined,
+  addableColumns = false
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
   const [kanbanCards, setKanbanCards] = useState([]);
@@ -23,6 +25,10 @@ const Kanban = ({
   }, [columns, cards]);
 
   const setColumns = columns => {
+    handleSimilarWeight(columns);
+    console.log(columns);
+
+    // Sort columns
     const sortedColumns = sortBy(columns, "weight");
     setKanbanColumns(sortedColumns);
   };
@@ -31,26 +37,28 @@ const Kanban = ({
     onCardsChange(kanbanCards);
   };
 
-  const setCards = cards => {
-    
-    const recursiveHandleSimilarWeight = (card, cards) => {
-      const similarCard = find(
-        cards,
-        curCard => curCard.id != card.id && card.weight == curCard.weight
+  /**
+   * Sometimes, there are items with the same weight, this function attempt so solve this problem.
+   *
+   */
+  const handleSimilarWeight = collection => {
+    const recursiveHandleSimilarWeight = (item, collection) => {
+      const similaritem = find(
+        collection,
+        curitem => curitem.id != item.id && item.weight == curitem.weight
       );
-      if (similarCard) {
-        similarCard.weight = similarCard.weight + 1;
-        recursiveHandleSimilarWeight(similarCard, cards);
+      if (similaritem) {
+        similaritem.weight = similaritem.weight + 1;
+        recursiveHandleSimilarWeight(similaritem, collection);
       }
     };
 
-    const handleSimilarWeight = cards => {
-      forEach(cards, card => {
-        recursiveHandleSimilarWeight(card, cards);
-      });
-    };
+    forEach(collection, item => {
+      recursiveHandleSimilarWeight(item, collection);
+    });
+  };
 
-    // Sometimes, there are cards with the same weight, this function attempt so solve this problem.
+  const setCards = cards => {
     handleSimilarWeight(cards);
     // Sort the cards.
     const sortedCards = sortBy(cards, "weight");
@@ -103,12 +111,42 @@ const Kanban = ({
     setCards(newKanbanCards);
   };
 
+  const addColumn = label => {
+    let newColumns = [...kanbanColumns];
+
+    // Get the maxiumum weight to set the new column at the end of the list
+    const maxiumumWeight = reduce(
+      newColumns,
+      (prevWeight, curr) =>
+        curr.weight >= prevWeight ? curr.weight : prevWeight,
+      1
+    );
+
+    console.log(maxiumumWeight);
+
+    let addedColumn = {
+      label,
+      weight: maxiumumWeight + 1
+    };
+
+    const id = onColumnAdd(label);
+
+    addedColumn.id =
+      typeof id === "undefined" ? Math.floor(10000 * Math.random()) : id;
+
+    newColumns.push(addedColumn);
+
+    setColumns(newColumns);
+  };
+
   const kanbanContextValues = {
     swapColumns,
     swapCards,
     moveCard,
     onCardClick,
-    handleCardsChange
+    handleCardsChange,
+    addColumn,
+    addableColumns
   };
   return (
     <KanbanContext.Provider value={kanbanContextValues}>

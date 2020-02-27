@@ -1,11 +1,9 @@
 var path = require("path");
 module.exports = {
-  entry: path.resolve("./dist/index.js"),
+  entry: path.resolve("./src/index.js"),
   mode: "development",
-  resolve: {
-    alias: {
-      "react-dom": "@hot-loader/react-dom"
-    }
+  output: {
+    libraryTarget: "umd"
   },
   module: {
     rules: [
@@ -22,11 +20,14 @@ module.exports = {
       }
     ]
   },
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    filename: path.join(__dirname, "dist"),
-    compress: true,
-    hot: true,
-    port: 9000
+  externals: {
+    react: {
+      commonjs: "react",
+      commonjs2: "react"
+    },
+    "react-dom": {
+      commonjs: "react-dom",
+      commonjs2: "react-dom"
+    }
   }
 };
