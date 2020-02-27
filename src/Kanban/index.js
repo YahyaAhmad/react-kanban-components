@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from "react";
 import KanbanView from "./KanbanView";
 import Backend from "react-dnd-html5-backend";
-import { reduce, sortBy, find, forEach } from "lodash";
+import { reduce, orderBy, find, forEach } from "lodash";
 import { DndProvider } from "react-dnd";
 
 export const KanbanContext = React.createContext(null);
 
 const funNotDefined = () => null;
 
+const promiseFunNotDefined = () =>
+  new Promise((resolve, reject) => {
+    const newId = Math.floor(10000 * Math.random());
+    resolve(newId);
+  });
+
 const Kanban = ({
   columns = [],
   cards = [],
   onCardClick = funNotDefined,
   onCardsChange = funNotDefined,
-  onColumnAdd = funNotDefined,
+  onColumnAdd = promiseFunNotDefined,
   addableColumns = false
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
@@ -29,7 +35,7 @@ const Kanban = ({
     console.log(columns);
 
     // Sort columns
-    const sortedColumns = sortBy(columns, "weight");
+    let sortedColumns = orderBy(columns, ["locked", "weight"], ["desc", "asc"]);
     setKanbanColumns(sortedColumns);
   };
 
@@ -61,7 +67,7 @@ const Kanban = ({
   const setCards = cards => {
     handleSimilarWeight(cards);
     // Sort the cards.
-    const sortedCards = sortBy(cards, "weight");
+    const sortedCards = orderBy(cards, "weight", "asc");
     setKanbanCards(sortedCards);
   };
 
@@ -111,33 +117,39 @@ const Kanban = ({
     setCards(newKanbanCards);
   };
 
-  const addColumn = label => {
-    let newColumns = [...kanbanColumns];
+  const addColumn = label =>
+    new Promise(async resolve => {
+      console.log("Submit");
 
-    // Get the maxiumum weight to set the new column at the end of the list
-    const maxiumumWeight = reduce(
-      newColumns,
-      (prevWeight, curr) =>
-        curr.weight >= prevWeight ? curr.weight : prevWeight,
-      1
-    );
+      let newColumns = [...kanbanColumns];
 
-    console.log(maxiumumWeight);
+      // Get the maxiumum weight to set the new column at the end of the list
+      const maxiumumWeight = reduce(
+        newColumns,
+        (prevWeight, curr) =>
+          curr.weight >= prevWeight ? curr.weight : prevWeight,
+        1
+      );
 
-    let addedColumn = {
-      label,
-      weight: maxiumumWeight + 1
-    };
+      let addedColumn = {
+        label,
+        weight: maxiumumWeight + 1
+      };
 
-    const id = onColumnAdd(label);
+      let promise = onColumnAdd(label, maxiumumWeight + 1);
 
-    addedColumn.id =
-      typeof id === "undefined" ? Math.floor(10000 * Math.random()) : id;
+      if (!(promise instanceof Promise)) {
+        throw new Error("onColumnAdd should return a promise");
+      }
 
-    newColumns.push(addedColumn);
+      addedColumn.id = await promise;
 
-    setColumns(newColumns);
-  };
+      newColumns.push(addedColumn);
+
+      resolve(addedColumn);
+
+      setColumns(newColumns);
+    });
 
   const kanbanContextValues = {
     swapColumns,

@@ -1,0 +1,49 @@
+.lds-dual-ring {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.Kanban-Column-Submit {
+  position: relative;
+  height: 100%;
+  width: auto;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 8px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.Kanban-Form-Actions {
+  margin: 5px -5px 0 -5px;
+}
+
+.Kanban-Column-Form .btn {
+  padding: 0;
+  margin: 0 5px;
+  font-size: 22px;
+  width: 35px;
+  height: 35px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
