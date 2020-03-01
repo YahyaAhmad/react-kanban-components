@@ -8,6 +8,14 @@
   padding-bottom: 5px;
   font-size: 18px;
   cursor: pointer;
+  padding: 0;
+  margin: 5px 0 6px;
+  resize: none;
+  overflow: hidden;
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
 }
 
 .Kanban-Column-Label:focus {
@@ -28,4 +36,9 @@
 
 .Kanban-Column.Locked .Kanban-Column-Label {
   color: white;
+}
+
+.Kanban-Loadmore {
+  margin-top: 10px;
+  text-align: center;
 }

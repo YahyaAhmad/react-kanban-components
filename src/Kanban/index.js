@@ -10,8 +10,7 @@ const funNotDefined = () => null;
 
 const promiseFunNotDefined = () =>
   new Promise((resolve, reject) => {
-    const newId = Math.floor(10000 * Math.random());
-    resolve(newId);
+    throw new Error(`Promise function not defined`);
   });
 
 const Kanban = ({
@@ -21,6 +20,8 @@ const Kanban = ({
   onCardsChange = funNotDefined,
   onColumnAdd = promiseFunNotDefined,
   onColumnsChange = funNotDefined,
+  onColumnLoadmore = null,
+  onColumnRename = funNotDefined,
   addableColumns = false,
   editableColumns = false
 }) => {
@@ -34,7 +35,6 @@ const Kanban = ({
 
   const setColumns = columns => {
     handleSimilarWeight(columns);
-    console.log(columns);
 
     // Sort columns
     let sortedColumns = orderBy(columns, ["locked", "weight"], ["desc", "asc"]);
@@ -156,14 +156,35 @@ const Kanban = ({
       setColumns(newColumns);
     });
 
+  const renameColumn = (columnId, label) => {
+    const newColumns = [...kanbanColumns];
+    let columnToRename = find(newColumns, { id: columnId });
+    columnToRename.label = label;
+    onColumnRename(columnId, label);
+    setColumns(newColumns);
+  };
+
+  const columnLoadmore = async id => {
+    const onColumnLoadmorePromise = onColumnLoadmore(id);
+    if (onColumnLoadmorePromise instanceof Promise) {
+      const loadmoreColumns = await onColumnLoadmorePromise;
+      const newColumns = [...kanbanColumns, ...loadmoreColumns];
+      setColumns(newColumns);
+    } else {
+      throw new Error("onColumnLoadmore function should be a promise");
+    }
+  };
+
   const kanbanContextValues = {
     swapColumns,
     swapCards,
     moveCard,
     onCardClick,
+    columnLoadmore,
     handleCardsChange,
     handleColumnsChange,
     addColumn,
+    renameColumn,
     addableColumns,
     editableColumns
   };

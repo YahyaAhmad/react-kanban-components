@@ -3,13 +3,16 @@ import ColumnView from "./ColumnView";
 import { useDrag, useDrop } from "react-dnd";
 import types from "../../../constants/types";
 import { KanbanContext } from "../../";
-const Column = ({ children, weight, label, id, locked }) => {
+import Card from "../Card/Card";
+const Column = ({ children, weight, label, id, locked, loadmore }) => {
   const ref = useRef(null);
   const {
     swapColumns,
     moveCard,
     handleColumnsChange,
-    editableColumns
+    editableColumns,
+    renameColumn,
+    columnLoadmore
   } = useContext(KanbanContext);
   const [{ visibility }, dragRef] = useDrag({
     item: { type: types.COLUMN, id },
@@ -67,11 +70,28 @@ const Column = ({ children, weight, label, id, locked }) => {
       swapColumns(dragIndex, hoverIndex);
     }
   });
+
+  const handleNameChange = label => {
+    renameColumn(id, label);
+  };
+
+  const handleLoadmore = () =>
+    new Promise(resolve => {
+      resolve([
+        {
+          id: 1022,
+          name: " Test Name",
+          columnId: 19,
+          component: Card
+        }
+      ]);
+    });
   if (locked) {
     dropRef(ref);
   } else {
     dropRef(dragRef(ref));
   }
+
   return (
     <ColumnView
       id={id}
@@ -80,6 +100,9 @@ const Column = ({ children, weight, label, id, locked }) => {
       label={label}
       locked={locked}
       editable={editableColumns}
+      onChange={handleNameChange}
+      loadmore={loadmore}
+      onLoadmore={handleLoadmore}
     >
       {children}
     </ColumnView>

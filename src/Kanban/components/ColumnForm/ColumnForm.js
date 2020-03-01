@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { MdAdd, MdDelete } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import FormLoader from "./components/FormLoader";
-const ColumnAddFormView = ({
+const ColumnForm = ({
   showForm = false,
   onAdd,
   onSubmit,
@@ -57,4 +57,4 @@ const ColumnAddFormView = ({
   return <div>{showForm ? renderForm() : renderAddButton()}</div>;
 };
 
-export default ColumnAddFormView;
+export default ColumnForm;

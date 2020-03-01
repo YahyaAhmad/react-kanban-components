@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { KanbanContext } from "../..";
-import ColumnAddFormView from "./ColumnAddFormView";
+import ColumnForm from "./ColumnForm";
 
 const ColumnAddForm = () => {
   const { addableColumns, addColumn } = useContext(KanbanContext);
@@ -23,7 +23,7 @@ const ColumnAddForm = () => {
 
   return (
     addableColumns && (
-      <ColumnAddFormView
+      <ColumnForm
         showForm={showForm}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
