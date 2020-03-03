@@ -60,7 +60,7 @@ const Kanban = ({
         curitem => curitem.id != item.id && item.weight == curitem.weight
       );
       if (similaritem) {
-        similaritem.weight = similaritem.weight + 1;
+        similaritem.weight = parseInt(similaritem.weight) + 1;
         recursiveHandleSimilarWeight(similaritem, collection);
       }
     };
@@ -131,7 +131,9 @@ const Kanban = ({
       const maxiumumWeight = reduce(
         newColumns,
         (prevWeight, curr) =>
-          curr.weight >= prevWeight ? curr.weight : prevWeight,
+          parseInt(curr.weight) >= parseInt(prevWeight)
+            ? parseInt(curr.weight)
+            : parseInt(prevWeight),
         1
       );
 
