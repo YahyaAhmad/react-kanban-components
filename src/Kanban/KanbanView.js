@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { map, omit, filter } from "lodash";
 import Column from "./components/Column";
 import "./style.css";
@@ -6,6 +6,7 @@ import Card from "./components/Card/Card";
 import ColumnForm from "./components/ColumnForm";
 
 const KanbanView = ({ columns, cards }) => {
+  const kanbanRef = useRef();
   const renderCards = columnId => {
     const columnCards = filter(cards, { columnId });
     return map(columnCards, card => {
@@ -33,8 +34,15 @@ const KanbanView = ({ columns, cards }) => {
     });
   };
 
+  const handleScroll = (e, delta) => {
+    if (kanbanRef.current) {
+      const delta = e.deltaY;
+      kanbanRef.current.scrollLeft += delta / 1.2;
+    }
+  };
+
   return (
-    <div className="Kanban">
+    <div className="Kanban" ref={kanbanRef} onWheel={handleScroll}>
       {renderColumns()}
       <ColumnForm />
     </div>

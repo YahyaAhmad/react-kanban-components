@@ -109,9 +109,11 @@ const ColumnView = React.forwardRef(
           dangerouslySetInnerHTML={{ __html: label }}
         />
         <div>
-          <a className="Kanban-Column-Delete" onClick={onColumnDelete}>
-            <MdClear />
-          </a>
+          {!locked && (
+            <a className="Kanban-Column-Delete" onClick={onColumnDelete}>
+              <MdClear />
+            </a>
+          )}
         </div>
       </div>
     );
