@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import KanbanView from "./KanbanView";
 import Backend from "react-dnd-html5-backend";
-import { reduce, orderBy, find, forEach } from "lodash";
+import { reduce, orderBy, find, forEach, map } from "lodash";
 import { DndProvider } from "react-dnd";
 
 export const KanbanContext = React.createContext(null);
@@ -20,6 +20,7 @@ const Kanban = ({
   onCardsChange = funNotDefined,
   onColumnAdd = promiseFunNotDefined,
   onColumnsChange = funNotDefined,
+  renderLoadmore = null,
   onColumnLoadmore = null,
   onColumnRename = funNotDefined,
   addableColumns = false,
@@ -30,6 +31,16 @@ const Kanban = ({
 
   useEffect(() => {
     setColumns(columns);
+
+    // Lock any card in a locked column
+    cards = map(cards, card => {
+      const column = find(columns, { id: card.columnId });
+      if (column.locked) {
+        card.locked = true;
+      }
+      return card;
+    });
+
     setCards(cards);
   }, [columns, cards]);
 
@@ -72,6 +83,7 @@ const Kanban = ({
 
   const setCards = cards => {
     handleSimilarWeight(cards);
+
     // Sort the cards.
     const sortedCards = orderBy(cards, "weight", "asc");
     setKanbanCards(sortedCards);
@@ -104,7 +116,17 @@ const Kanban = ({
     let newKanbanCards = { ...kanbanCards };
     let card = find(kanbanCards, { id: cardId });
     card.columnId = toColumnId;
+    let locked = false;
+
+    // Check if the new column is a locked column
+    const newColumn = find(kanbanColumns, { id: toColumnId });
+    if (newColumn.locked) {
+      card.locked = true;
+      locked = true;
+    }
+
     setCards(newKanbanCards);
+    return locked;
   };
 
   /**
@@ -166,15 +188,23 @@ const Kanban = ({
     setColumns(newColumns);
   };
 
-  const columnLoadmore = async id => {
-    const onColumnLoadmorePromise = onColumnLoadmore(id);
-    if (onColumnLoadmorePromise instanceof Promise) {
-      const loadmoreColumns = await onColumnLoadmorePromise;
-      const newColumns = [...kanbanColumns, ...loadmoreColumns];
-      setColumns(newColumns);
-    } else {
-      throw new Error("onColumnLoadmore function should be a promise");
-    }
+  const columnLoadmore = (id, page) =>
+    new Promise(async resolve => {
+      const onColumnLoadmorePromise = onColumnLoadmore(id, page);
+      if (onColumnLoadmorePromise instanceof Promise) {
+        const loadmoreCards = await onColumnLoadmorePromise;
+        const newCards = [...kanbanCards, ...loadmoreCards];
+        console.log(newCards);
+        setCards(newCards);
+        resolve(newCards);
+      } else {
+        throw new Error("onColumnLoadmore function should be a promise");
+      }
+    });
+
+  const isLocked = columnId => {
+    const column = find(kanbanColumns, { id: columnId });
+    return column.locked;
   };
 
   const kanbanContextValues = {
@@ -188,7 +218,9 @@ const Kanban = ({
     addColumn,
     renameColumn,
     addableColumns,
-    editableColumns
+    editableColumns,
+    renderLoadmore,
+    isLocked
   };
   return (
     <KanbanContext.Provider value={kanbanContextValues}>

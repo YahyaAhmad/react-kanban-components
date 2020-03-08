@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import "./style.css";
 import { useForm } from "react-hook-form";
+import { KanbanContext } from "../..";
 const ColumnView = React.forwardRef(
   (
     {
@@ -12,30 +13,38 @@ const ColumnView = React.forwardRef(
       editable,
       onChange,
       loadmore,
-      onLoadmore
+      onLoadmore,
+      pageTotal,
+      pageSize,
+      currentPage
     },
     ref
   ) => {
-    const { register, errors, handleSubmit } = useForm();
     const [editMode, setEditMode] = useState(false);
+    const { renderLoadmore } = useContext(KanbanContext);
+
     const inputRef = useRef();
     let columnClasses = ["Kanban-Column"];
-
-    useEffect(() => {
-      if (editMode) {
-        inputRef.current.focus();
-        inputRef.current.select();
-      }
-    }, [editMode]);
 
     if (locked) {
       columnClasses.push("Locked");
     }
 
-    const adjustTextareaHeight = () => {
-      inputRef.current.style.height = "5px";
-      inputRef.current.style.height = inputRef.current.scrollHeight + "px";
-    };
+    useEffect(() => {
+      if (editMode) {
+        inputRef.current.focus();
+        document.execCommand("selectAll", false, null);
+      }
+    }, [editMode]);
+
+    useEffect(() => {
+      if (!editMode) {
+        const labelInput = inputRef.current.innerHTML;
+        if (!labelInput) {
+          inputRef.current.innerHTML = label;
+        }
+      }
+    }, [editMode]);
 
     const handleEditMode = () => {
       if (editable) {
@@ -43,35 +52,29 @@ const ColumnView = React.forwardRef(
       }
     };
 
+    const cancelEditMode = () => setEditMode(false);
+
     const handleKeydown = e => {
       if (e.which == 13) {
-        handleSubmit(formSubmit)();
+        const labelInput = inputRef.current.innerHTML;
+        formSubmit(labelInput);
+        return false;
       }
     };
 
-    const formSubmit = values => {
-      setEditMode(false);
-      onChange(values["label"]);
+    const formSubmit = label => {
+      if (label) {
+        onChange(label);
+      }
+
+      cancelEditMode();
     };
 
-    const renderLabel = () =>
-      editMode ? (
-        <textarea
-          className="form-control Kanban-Column-Label"
-          defaultValue={label}
-          onChange={adjustTextareaHeight}
-          name="label"
-          onKeyDown={handleKeydown}
-          ref={e => {
-            register(e);
-            inputRef.current = e;
-          }}
-        />
-      ) : (
-        <h2 onClick={handleEditMode} className="Kanban-Column-Label">
-          {label}
-        </h2>
-      );
+    const loadmoreVisible = () => {
+      const currentItems = pageSize * (currentPage + 1);
+
+      return currentItems < pageTotal;
+    };
 
     return (
       <div className="Kanban-Column-Container">
@@ -81,13 +84,26 @@ const ColumnView = React.forwardRef(
           ref={ref}
           style={{ visibility }}
         >
-          {renderLabel()}
+          <h2
+            contentEditable={editMode}
+            onClick={handleEditMode}
+            onBlur={cancelEditMode}
+            onKeyDown={handleKeydown}
+            className="Kanban-Column-Label"
+            ref={inputRef}
+            dangerouslySetInnerHTML={{ __html: label }}
+          />
+
           <div className="Kanban-Column-Content">{children}</div>
           {loadmore && (
             <div className="Kanban-Loadmore">
-              <button className="Kanban-Loadmore-Button" onClick={onLoadmore}>
-                Load more
-              </button>
+              {loadmoreVisible()
+                ? renderLoadmore(onLoadmore, {
+                    columnId: id,
+                    pageSize,
+                    pageTotal
+                  })
+                : null}
             </div>
           )}
         </div>

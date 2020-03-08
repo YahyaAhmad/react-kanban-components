@@ -4,9 +4,11 @@ import { useDrag, useDrop } from "react-dnd";
 import types from "../../../constants/types";
 import { KanbanContext } from "../..";
 
-const Card = ({ id, columnId, children, weight }) => {
+const Card = ({ id, columnId, children, weight, locked }) => {
   const ref = useRef();
-  const { swapCards, onCardClick, handleCardsChange } = useContext(KanbanContext);
+  const { swapCards, onCardClick, handleCardsChange, isLocked } = useContext(
+    KanbanContext
+  );
   const [{ visibility }, dragRef] = useDrag({
     item: { type: types.CARD, id, columnId, weight },
     isDragging: monitor => monitor.getItem().id == id,
@@ -19,6 +21,8 @@ const Card = ({ id, columnId, children, weight }) => {
       }
     }
   });
+
+  console.log(locked);
 
   const [, dropRef] = useDrop({
     accept: types.CARD,
@@ -48,12 +52,17 @@ const Card = ({ id, columnId, children, weight }) => {
     onCardClick(id);
   };
 
+  const cardClasses = ["Kanban-Card"];
+  if (isLocked(columnId)) {
+    cardClasses.push("Kanban-Card-Locked");
+  }
+
   const cardRef = dropRef(dragRef(ref));
   return (
     <div
       style={{ visibility }}
       ref={cardRef}
-      className="Kanban-Card"
+      className={cardClasses.join(" ")}
       onClick={handleClick}
     >
       {children}

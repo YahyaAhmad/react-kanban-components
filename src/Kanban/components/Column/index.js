@@ -1,11 +1,21 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import ColumnView from "./ColumnView";
 import { useDrag, useDrop } from "react-dnd";
 import types from "../../../constants/types";
 import { KanbanContext } from "../../";
 import Card from "../Card/Card";
-const Column = ({ children, weight, label, id, locked, loadmore }) => {
+const Column = ({
+  children,
+  weight,
+  label,
+  id,
+  locked,
+  loadmore,
+  pageTotal,
+  pageSize
+}) => {
   const ref = useRef(null);
+  const [currentPage, setCurrentPage] = useState(0);
   const {
     swapColumns,
     moveCard,
@@ -75,17 +85,15 @@ const Column = ({ children, weight, label, id, locked, loadmore }) => {
     renameColumn(id, label);
   };
 
-  const handleLoadmore = () =>
-    new Promise(resolve => {
-      resolve([
-        {
-          id: 1022,
-          name: " Test Name",
-          columnId: 19,
-          component: Card
-        }
-      ]);
+  const handleLoadmore = async () => {
+    const newPage = currentPage + 1;
+    const promise = columnLoadmore(id, newPage);
+    promise.then(() => {
+      setCurrentPage(newPage);
     });
+    return promise;
+  };
+
   if (locked) {
     dropRef(ref);
   } else {
@@ -103,6 +111,9 @@ const Column = ({ children, weight, label, id, locked, loadmore }) => {
       onChange={handleNameChange}
       loadmore={loadmore}
       onLoadmore={handleLoadmore}
+      pageSize={pageSize}
+      pageTotal={pageTotal}
+      currentPage={currentPage}
     >
       {children}
     </ColumnView>

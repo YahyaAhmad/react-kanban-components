@@ -24,8 +24,9 @@
 
 .Kanban-Column {
   background-color: #f2f2f2;
-  width: 200px;
-  height: 350px;
+  width: 240px;
+  overflow: auto;
+  height: 400px;
   padding: 5px 10px;
 }
 
