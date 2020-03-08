@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./style.css";
+import { KanbanContext } from "../../../..";
 
-const FormLoader = () => <div class="lds-dual-ring"></div>;
+const FormLoader = ({ context = "normal" }) => {
+  const { renderLoader } = useContext(KanbanContext);
+  return renderLoader(context);
+};
 
 export default FormLoader;

@@ -22,8 +22,6 @@ const Card = ({ id, columnId, children, weight, locked }) => {
     }
   });
 
-  console.log(locked);
-
   const [, dropRef] = useDrop({
     accept: types.CARD,
     hover: (item, monitor) => {

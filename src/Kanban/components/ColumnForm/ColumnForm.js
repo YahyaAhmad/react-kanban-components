@@ -36,7 +36,7 @@ const ColumnForm = ({
       </div>
       <div className="Kanban-Form-Actions">
         <button className="btn btn-primary Kanban-Column-Submit" type="submit">
-          {loading ? <FormLoader /> : <MdAdd />}
+          {loading ? <FormLoader context="columnForm" /> : <MdAdd />}
         </button>
         <button
           type="button"

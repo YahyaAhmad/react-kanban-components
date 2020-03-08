@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import KanbanView from "./KanbanView";
 import Backend from "react-dnd-html5-backend";
-import { reduce, orderBy, find, forEach, map } from "lodash";
+import { reduce, orderBy, find, forEach, map, filter, sumBy } from "lodash";
 import { DndProvider } from "react-dnd";
 
 export const KanbanContext = React.createContext(null);
@@ -24,7 +24,10 @@ const Kanban = ({
   onColumnLoadmore = null,
   onColumnRename = funNotDefined,
   addableColumns = false,
-  editableColumns = false
+  editableColumns = false,
+  onColumnDelete = promiseFunNotDefined,
+  confirmMessage = "Are you sure that you want to delete this column?",
+  renderLoader = () => <div class="lds-dual-ring"></div>
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
   const [kanbanCards, setKanbanCards] = useState([]);
@@ -188,13 +191,20 @@ const Kanban = ({
     setColumns(newColumns);
   };
 
+  const deleteColumn = async columnId => {
+    await onColumnDelete(columnId);
+    let newColumns = { ...kanbanColumns };
+    newColumns = filter(newColumns, column => column.id != columnId);
+    setColumns(newColumns);
+  };
+
   const columnLoadmore = (id, page) =>
     new Promise(async resolve => {
-      const onColumnLoadmorePromise = onColumnLoadmore(id, page);
+      const currentCount = sumBy(kanbanCards, { columnId: id });
+      const onColumnLoadmorePromise = onColumnLoadmore(id, page, currentCount);
       if (onColumnLoadmorePromise instanceof Promise) {
         const loadmoreCards = await onColumnLoadmorePromise;
         const newCards = [...kanbanCards, ...loadmoreCards];
-        console.log(newCards);
         setCards(newCards);
         resolve(newCards);
       } else {
@@ -219,8 +229,11 @@ const Kanban = ({
     renameColumn,
     addableColumns,
     editableColumns,
+    deleteColumn,
     renderLoadmore,
-    isLocked
+    confirmMessage,
+    isLocked,
+    renderLoader
   };
   return (
     <KanbanContext.Provider value={kanbanContextValues}>

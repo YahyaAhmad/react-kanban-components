@@ -22,6 +22,14 @@
   cursor: auto;
 }
 
+.Kanban-Column-Delete {
+  cursor: pointer;
+}
+
+.Kanban-Column-Header {
+  display: flex;
+}
+
 .Kanban-Column {
   background-color: #f2f2f2;
   width: 240px;

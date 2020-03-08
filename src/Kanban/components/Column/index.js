@@ -16,13 +16,17 @@ const Column = ({
 }) => {
   const ref = useRef(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(false);
   const {
     swapColumns,
     moveCard,
     handleColumnsChange,
     editableColumns,
     renameColumn,
-    columnLoadmore
+    columnLoadmore,
+    deleteColumn,
+    renderLoadmore,
+    confirmMessage
   } = useContext(KanbanContext);
   const [{ visibility }, dragRef] = useDrag({
     item: { type: types.COLUMN, id },
@@ -85,6 +89,13 @@ const Column = ({
     renameColumn(id, label);
   };
 
+  const handleColumnDelete = async () => {
+    if (confirm(confirmMessage)) {
+      setLoading(true);
+      await deleteColumn(id);
+    }
+  };
+
   const handleLoadmore = async () => {
     const newPage = currentPage + 1;
     const promise = columnLoadmore(id, newPage);
@@ -110,10 +121,13 @@ const Column = ({
       editable={editableColumns}
       onChange={handleNameChange}
       loadmore={loadmore}
+      loading={loading}
       onLoadmore={handleLoadmore}
       pageSize={pageSize}
       pageTotal={pageTotal}
       currentPage={currentPage}
+      onColumnDelete={handleColumnDelete}
+      renderLoadmore={renderLoadmore}
     >
       {children}
     </ColumnView>

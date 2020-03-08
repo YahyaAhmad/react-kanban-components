@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import "./style.css";
 import { useForm } from "react-hook-form";
 import { KanbanContext } from "../..";
+import { MdRemove, MdRemoveFromQueue, MdClear } from "react-icons/md";
+import FormLoader from "../ColumnForm/components/FormLoader";
 const ColumnView = React.forwardRef(
   (
     {
@@ -16,12 +18,14 @@ const ColumnView = React.forwardRef(
       onLoadmore,
       pageTotal,
       pageSize,
-      currentPage
+      currentPage,
+      renderLoadmore,
+      onColumnDelete,
+      loading
     },
     ref
   ) => {
     const [editMode, setEditMode] = useState(false);
-    const { renderLoadmore } = useContext(KanbanContext);
 
     const inputRef = useRef();
     let columnClasses = ["Kanban-Column"];
@@ -38,7 +42,7 @@ const ColumnView = React.forwardRef(
     }, [editMode]);
 
     useEffect(() => {
-      if (!editMode) {
+      if (!editMode && inputRef.current) {
         const labelInput = inputRef.current.innerHTML;
         if (!labelInput) {
           inputRef.current.innerHTML = label;
@@ -76,6 +80,42 @@ const ColumnView = React.forwardRef(
       return currentItems < pageTotal;
     };
 
+    const renderContent = () => (
+      <>
+        <div className="Kanban-Column-Content">{children}</div>
+        {loadmore && (
+          <div className="Kanban-Loadmore">
+            {loadmoreVisible()
+              ? renderLoadmore(onLoadmore, {
+                  columnId: id,
+                  pageSize,
+                  pageTotal
+                })
+              : null}
+          </div>
+        )}
+      </>
+    );
+
+    const renderHeader = () => (
+      <div className="Kanban-Column-Header">
+        <h2
+          contentEditable={editMode}
+          onClick={handleEditMode}
+          onBlur={cancelEditMode}
+          onKeyDown={handleKeydown}
+          className="Kanban-Column-Label"
+          ref={inputRef}
+          dangerouslySetInnerHTML={{ __html: label }}
+        />
+        <div>
+          <a className="Kanban-Column-Delete" onClick={onColumnDelete}>
+            <MdClear />
+          </a>
+        </div>
+      </div>
+    );
+
     return (
       <div className="Kanban-Column-Container">
         <div
@@ -84,27 +124,13 @@ const ColumnView = React.forwardRef(
           ref={ref}
           style={{ visibility }}
         >
-          <h2
-            contentEditable={editMode}
-            onClick={handleEditMode}
-            onBlur={cancelEditMode}
-            onKeyDown={handleKeydown}
-            className="Kanban-Column-Label"
-            ref={inputRef}
-            dangerouslySetInnerHTML={{ __html: label }}
-          />
-
-          <div className="Kanban-Column-Content">{children}</div>
-          {loadmore && (
-            <div className="Kanban-Loadmore">
-              {loadmoreVisible()
-                ? renderLoadmore(onLoadmore, {
-                    columnId: id,
-                    pageSize,
-                    pageTotal
-                  })
-                : null}
-            </div>
+          {loading ? (
+            <FormLoader />
+          ) : (
+            <>
+              {renderHeader()}
+              {renderContent()}
+            </>
           )}
         </div>
       </div>
