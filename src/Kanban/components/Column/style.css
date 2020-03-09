@@ -34,8 +34,13 @@
   background-color: #f2f2f2;
   width: 240px;
   overflow: auto;
-  height: 400px;
   padding: 5px 10px;
+  min-height: 400px;
+}
+
+.Kanban-Column-Content {
+  height: 400px;
+  overflow: auto;
 }
 
 .Kanban-Column.Locked {

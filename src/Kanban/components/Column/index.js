@@ -93,6 +93,7 @@ const Column = ({
     if (confirm(confirmMessage)) {
       setLoading(true);
       await deleteColumn(id);
+      setLoading(false);
     }
   };
 

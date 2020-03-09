@@ -27,12 +27,46 @@ const ColumnView = React.forwardRef(
   ) => {
     const [editMode, setEditMode] = useState(false);
 
+    const columnRef = useRef();
     const inputRef = useRef();
     let columnClasses = ["Kanban-Column"];
 
     if (locked) {
       columnClasses.push("Locked");
     }
+
+    useEffect(() => {
+      if (columnRef.current) {
+        columnRef.current.addEventListener("wheel", handleScroll, {
+          passive: false
+        });
+      }
+    }, [columnRef]);
+
+    const handleScroll = e => {
+      if (canScroll(columnRef.current, e.deltaY)) {
+        e.stopPropagation();
+      }
+    };
+
+    const canScroll = (columnEl, deltaY) => {
+      if (columnEl.scrollHeight <= columnEl.clientHeight) {
+        return false;
+      }
+
+      if (
+        deltaY > 0 &&
+        columnEl.scrollTop + columnEl.clientHeight >= columnEl.scrollHeight
+      ) {
+        return false;
+      }
+
+      if (deltaY < 0 && columnEl.scrollTop == 0) {
+        return false;
+      }
+
+      return true;
+    };
 
     useEffect(() => {
       if (editMode) {
@@ -82,7 +116,13 @@ const ColumnView = React.forwardRef(
 
     const renderContent = () => (
       <>
-        <div className="Kanban-Column-Content">{children}</div>
+        <div
+          ref={columnRef}
+          style={{ visibility: loading ? "hidden" : null }}
+          className="Kanban-Column-Content"
+        >
+          {children}
+        </div>
         {loadmore && (
           <div className="Kanban-Loadmore">
             {loadmoreVisible()
@@ -98,7 +138,10 @@ const ColumnView = React.forwardRef(
     );
 
     const renderHeader = () => (
-      <div className="Kanban-Column-Header">
+      <div
+        style={{ visibility: loading ? "hidden" : null }}
+        className="Kanban-Column-Header"
+      >
         <h2
           contentEditable={editMode}
           onClick={handleEditMode}
@@ -126,14 +169,9 @@ const ColumnView = React.forwardRef(
           ref={ref}
           style={{ visibility }}
         >
-          {loading ? (
-            <FormLoader />
-          ) : (
-            <>
-              {renderHeader()}
-              {renderContent()}
-            </>
-          )}
+          {loading && <FormLoader />}
+          {renderHeader()}
+          {renderContent()}
         </div>
       </div>
     );

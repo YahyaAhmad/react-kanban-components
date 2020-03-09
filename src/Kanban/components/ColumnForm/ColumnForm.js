@@ -7,6 +7,7 @@ const ColumnForm = ({
   onAdd,
   onSubmit,
   onCancel,
+  columnInputPlaceholder,
   loading
 }) => {
   const { handleSubmit, register, errors } = useForm();
@@ -26,7 +27,7 @@ const ColumnForm = ({
           type="text"
           name="label"
           className="form-control"
-          placeholder="Name"
+          placeholder={columnInputPlaceholder}
           ref={e => {
             register(e, { required: true });
             inputRef.current = e;

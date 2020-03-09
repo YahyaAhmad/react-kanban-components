@@ -27,6 +27,8 @@ const Kanban = ({
   editableColumns = false,
   onColumnDelete = promiseFunNotDefined,
   confirmMessage = "Are you sure that you want to delete this column?",
+  columnDeletionAlertMessage = "You can't delete this column since it has cards in it.",
+  columnInputPlaceholder = "Name",
   renderLoader = () => <div class="lds-dual-ring"></div>
 }) => {
   const [kanbanColumns, setKanbanColumns] = useState([]);
@@ -192,6 +194,13 @@ const Kanban = ({
   };
 
   const deleteColumn = async columnId => {
+    // Check if there is any cards in this column
+    const cards = filter(kanbanCards, { columnId });
+    if (cards.length > 0) {
+      alert(columnDeletionAlertMessage);
+      return;
+    }
+
     await onColumnDelete(columnId);
     let newColumns = { ...kanbanColumns };
     newColumns = filter(newColumns, column => column.id != columnId);
@@ -232,6 +241,7 @@ const Kanban = ({
     deleteColumn,
     renderLoadmore,
     confirmMessage,
+    columnInputPlaceholder,
     isLocked,
     renderLoader
   };

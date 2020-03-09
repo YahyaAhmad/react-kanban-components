@@ -3,7 +3,9 @@ import { KanbanContext } from "../..";
 import ColumnForm from "./ColumnForm";
 
 const ColumnAddForm = () => {
-  const { addableColumns, addColumn } = useContext(KanbanContext);
+  const { addableColumns, addColumn, columnInputPlaceholder } = useContext(
+    KanbanContext
+  );
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleAdd = () => {
@@ -29,6 +31,7 @@ const ColumnAddForm = () => {
         onCancel={handleCancel}
         onAdd={handleAdd}
         loading={loading}
+        columnInputPlaceholder={columnInputPlaceholder}
       />
     )
   );
