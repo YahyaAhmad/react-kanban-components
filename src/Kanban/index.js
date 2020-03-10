@@ -53,7 +53,11 @@ const Kanban = ({
     handleSimilarWeight(columns);
 
     // Sort columns
-    let sortedColumns = orderBy(columns, ["locked", "weight"], ["desc", "asc"]);
+    let sortedColumns = orderBy(
+      columns,
+      ["locked", column => parseInt(column.weight)],
+      ["desc", "asc"]
+    );
     setKanbanColumns(sortedColumns);
   };
 
