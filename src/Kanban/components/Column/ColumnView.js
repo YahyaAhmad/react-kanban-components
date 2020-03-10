@@ -122,18 +122,18 @@ const ColumnView = React.forwardRef(
           className="Kanban-Column-Content"
         >
           {children}
+          {loadmore && (
+            <div className="Kanban-Loadmore">
+              {loadmoreVisible()
+                ? renderLoadmore(onLoadmore, {
+                    columnId: id,
+                    pageSize,
+                    pageTotal
+                  })
+                : null}
+            </div>
+          )}
         </div>
-        {loadmore && (
-          <div className="Kanban-Loadmore">
-            {loadmoreVisible()
-              ? renderLoadmore(onLoadmore, {
-                  columnId: id,
-                  pageSize,
-                  pageTotal
-                })
-              : null}
-          </div>
-        )}
       </>
     );
 
