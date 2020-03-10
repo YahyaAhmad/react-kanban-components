@@ -73,7 +73,10 @@ const Kanban = ({
     const recursiveHandleSimilarWeight = (item, collection) => {
       const similaritem = find(
         collection,
-        curitem => curitem.id != item.id && item.weight == curitem.weight
+        curitem =>
+          curitem.id != item.id &&
+          curitem.columnId == item.columnId &&
+          item.weight == curitem.weight
       );
       if (similaritem) {
         similaritem.weight = parseInt(similaritem.weight) + 1;
@@ -90,7 +93,7 @@ const Kanban = ({
     handleSimilarWeight(cards);
 
     // Sort the cards.
-    const sortedCards = orderBy(cards, "weight", "asc");
+    const sortedCards = orderBy(cards, card => parseInt(card.weight));
     setKanbanCards(sortedCards);
   };
 
@@ -209,11 +212,18 @@ const Kanban = ({
 
   const columnLoadmore = (id, page) =>
     new Promise(async resolve => {
-      const currentCount = sumBy(kanbanCards, { columnId: id });
-      const onColumnLoadmorePromise = onColumnLoadmore(id, page, currentCount);
+      const columnCards = filter(kanbanCards, card => card.columnId == id);
+      const onColumnLoadmorePromise = onColumnLoadmore(id, page, columnCards);
       if (onColumnLoadmorePromise instanceof Promise) {
+        let addedCards = [];
         const loadmoreCards = await onColumnLoadmorePromise;
-        const newCards = [...kanbanCards, ...loadmoreCards];
+        forEach(loadmoreCards, card => {
+          const foundCard = find(columnCards, { id: card.id });
+          if (!foundCard) {
+            addedCards.push(card);
+          }
+        });
+        const newCards = [...kanbanCards, ...addedCards];
         setCards(newCards);
         resolve(newCards);
       } else {

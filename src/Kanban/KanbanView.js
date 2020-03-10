@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { map, omit, filter } from "lodash";
+import { map, omit, filter, sortBy } from "lodash";
 import Column from "./components/Column";
 import "./style.css";
 import Card from "./components/Card/Card";
