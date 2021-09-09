@@ -1,24 +1,26 @@
 var path = require("path");
 module.exports = {
-  entry: path.resolve("./dist/index.js"),
-  resolve: {
-    alias: {
-      "react-dom": "@hot-loader/react-dom"
-    }
-  },
+  entry: path.resolve("./src/index.js"),
+  mode: 'production',
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+          options: {
+            presets: [
+              ["@babel/preset-env", { modules: "commonjs" }],
+              "@babel/preset-react",
+            ],
+          },
+        },
       },
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"]
-      }
-    ]
-  }
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
 };

@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "./scripts/kill-server.sh | webpack-dev-server --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
     "watch": "webpack --config webpack.watch.js --watch"
   },
   "author": "Yahya Ahmad",
