@@ -1,7 +1,10 @@
 var path = require("path");
 module.exports = {
   entry: path.resolve("./src/index.js"),
-  mode: 'production',
+  mode: "production",
+  output: {
+    libraryTarget: "umd"
+  },
   module: {
     rules: [
       {
@@ -22,5 +25,15 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
     ],
+  },
+  externals: {
+    react: {
+      commonjs: "react",
+      commonjs2: "react",
+    },
+    "react-dom": {
+      commonjs: "react-dom",
+      commonjs2: "react-dom",
+    },
   },
 };
